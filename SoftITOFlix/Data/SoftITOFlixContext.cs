@@ -14,6 +14,6 @@ namespace SoftITOFlix.Data
         {
         }
 
-        public DbSet<SoftITOFlix.Models.Category> Category { get; set; } = default!;
+        public DbSet<SoftITOFlix.Models.Category> Categories { get; set; } = default!;
     }
 }
