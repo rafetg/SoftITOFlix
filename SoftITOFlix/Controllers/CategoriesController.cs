@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ namespace SoftITOFlix.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
+        [Authorize]
         public ActionResult<Category> GetCategory(short id)
         {
             Category? category = _context.Categories.Find(id);
@@ -45,6 +47,7 @@ namespace SoftITOFlix.Controllers
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize(Roles = "ContentAdmin")]
         public void PutCategory(Category category)
         {
             _context.Categories.Update(category);
@@ -61,6 +64,7 @@ namespace SoftITOFlix.Controllers
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Roles = "ContentAdmin")]
         public short PostCategory(Category category)
         {
             _context.Categories.Add(category);
