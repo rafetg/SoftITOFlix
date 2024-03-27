@@ -20,6 +20,7 @@ namespace SoftITOFlix.Models
         public string? Description { get; set; }
         public TimeSpan Duration {  get; set; }
         public long ViewCount { get; set; }
+        public bool Passive { get; set; }
         [ForeignKey("MediaId")]
         public Media? Media { get; set; }
     }
