@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SoftITOFlix.Data;
+using Microsoft.AspNetCore.Identity;
 namespace SoftITOFlix
 {
     public class Program
@@ -10,6 +11,9 @@ namespace SoftITOFlix
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<SoftITOFlixContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("SoftITOFlixContext") ?? throw new InvalidOperationException("Connection string 'SoftITOFlixContext' not found.")));
+
+                        builder.Services.AddDefaultIdentity<SoftITOFlixUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<SoftITOFlixIdentityContext>();
 
             // Add services to the container.
 
@@ -26,6 +30,7 @@ namespace SoftITOFlix
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+                        app.UseAuthentication();;
 
             app.UseAuthorization();
 

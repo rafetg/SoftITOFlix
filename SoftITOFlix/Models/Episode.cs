@@ -5,6 +5,7 @@ namespace SoftITOFlix.Models
 {
     public class Episode
     {
+        public long Id { get; set; }
         public int MediaId { get; set; }
         [Range(0, byte.MaxValue)]
         public byte SeasonNumber {  get; set; }
