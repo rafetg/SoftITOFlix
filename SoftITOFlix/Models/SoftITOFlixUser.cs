@@ -17,5 +17,8 @@ public class SoftITOFlixUser : IdentityUser<long>
     [StringLength(100, MinimumLength = 2)]
     public string Name { get; set; } = "";
     public bool Passive { get; set; }
+    [NotMapped]
+    [StringLength(100, MinimumLength = 8)]
+    public string Password { get; set; } = "";
 }
 

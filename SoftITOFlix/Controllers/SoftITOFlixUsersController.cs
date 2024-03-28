@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SoftITOFlix.Data;
@@ -14,33 +17,42 @@ namespace SoftITOFlix.Controllers
     [ApiController]
     public class SoftITOFlixUsersController : ControllerBase
     {
-        private readonly SoftITOFlixContext _context;
+        private readonly SignInManager<SoftITOFlixUser> _signInManager;
 
-        public SoftITOFlixUsersController(SoftITOFlixContext context)
+        public SoftITOFlixUsersController(SignInManager<SoftITOFlixUser> signInManager)
         {
-            _context = context;
+            _signInManager = signInManager;
         }
 
         // GET: api/SoftITOFlixUsers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SoftITOFlixUser>>> GetUsers()
+        [Authorize(Roles = "Administrator")]
+        public ActionResult<List<SoftITOFlixUser>> GetUsers(bool includePassive = true)
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
-            return await _context.Users.ToListAsync();
+            IQueryable<SoftITOFlixUser> users = _signInManager.UserManager.Users;
+
+            if (includePassive == false)
+            {
+                users = users.Where(u => u.Passive == false);
+            }
+            return users.AsNoTracking().ToList();
         }
 
         // GET: api/SoftITOFlixUsers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<SoftITOFlixUser>> GetSoftITOFlixUser(long id)
+        [Authorize]
+        public ActionResult<SoftITOFlixUser> GetSoftITOFlixUser(long id)
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
-            var softITOFlixUser = await _context.Users.FindAsync(id);
+            SoftITOFlixUser? softITOFlixUser = null;
+
+            if (User.IsInRole("Administrator") == false)
+            {
+                if (User.FindFirstValue(ClaimTypes.NameIdentifier) != id.ToString())
+                {
+                    return Unauthorized();
+                }
+            }
+            softITOFlixUser = _signInManager.UserManager.Users.Where(u => u.Id == id).AsNoTracking().FirstOrDefault();
 
             if (softITOFlixUser == null)
             {
@@ -52,73 +64,74 @@ namespace SoftITOFlix.Controllers
 
         // PUT: api/SoftITOFlixUsers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSoftITOFlixUser(long id, SoftITOFlixUser softITOFlixUser)
+        [HttpPut]
+        [Authorize]
+        public ActionResult PutSoftITOFlixUser(SoftITOFlixUser softITOFlixUser)
         {
-            if (id != softITOFlixUser.Id)
-            {
-                return BadRequest();
-            }
+            SoftITOFlixUser? user = null;
 
-            _context.Entry(softITOFlixUser).State = EntityState.Modified;
-
-            try
+            if (User.IsInRole("CustomerRepresentative") == false)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SoftITOFlixUserExists(id))
+                if (User.FindFirstValue(ClaimTypes.NameIdentifier) != softITOFlixUser.Id.ToString())
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
+                    return Unauthorized();
                 }
             }
+            user = _signInManager.UserManager.Users.Where(u => u.Id == softITOFlixUser.Id).FirstOrDefault();
 
-            return NoContent();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            user.PhoneNumber = softITOFlixUser.PhoneNumber;
+            user.UserName = softITOFlixUser.UserName;
+            user.BirthDate = softITOFlixUser.BirthDate;
+            user.Email = softITOFlixUser.Email;
+            user.Name = softITOFlixUser.Name;
+            _signInManager.UserManager.UpdateAsync(user).Wait();
+            return Ok();
         }
 
         // POST: api/SoftITOFlixUsers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<SoftITOFlixUser>> PostSoftITOFlixUser(SoftITOFlixUser softITOFlixUser)
+        public ActionResult<string> PostSoftITOFlixUser(SoftITOFlixUser softITOFlixUser)
         {
-          if (_context.Users == null)
-          {
-              return Problem("Entity set 'SoftITOFlixContext.Users'  is null.");
-          }
-            _context.Users.Add(softITOFlixUser);
-            await _context.SaveChangesAsync();
+            if(User.Identity!.IsAuthenticated==true)
+            {
+                return BadRequest();
+            }
+            IdentityResult identityResult = _signInManager.UserManager.CreateAsync(softITOFlixUser, softITOFlixUser.Password).Result;
 
-            return CreatedAtAction("GetSoftITOFlixUser", new { id = softITOFlixUser.Id }, softITOFlixUser);
+            if (identityResult != IdentityResult.Success)
+            {
+                return identityResult.Errors.FirstOrDefault()!.Description;
+            }
+            return Ok();
         }
 
         // DELETE: api/SoftITOFlixUsers/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSoftITOFlixUser(long id)
+        public ActionResult DeleteSoftITOFlixUser(long id)
         {
-            if (_context.Users == null)
+            SoftITOFlixUser? user = null;
+
+            if (User.IsInRole("CustomerRepresentative") == false)
+            {
+                if (User.FindFirstValue(ClaimTypes.NameIdentifier) != id.ToString())
+                {
+                    return Unauthorized();
+                }
+            }
+            user = _signInManager.UserManager.Users.Where(u => u.Id == id).FirstOrDefault();
+
+            if (user == null)
             {
                 return NotFound();
             }
-            var softITOFlixUser = await _context.Users.FindAsync(id);
-            if (softITOFlixUser == null)
-            {
-                return NotFound();
-            }
-
-            _context.Users.Remove(softITOFlixUser);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool SoftITOFlixUserExists(long id)
-        {
-            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+            user.Passive = true;
+            _signInManager.UserManager.UpdateAsync(user).Wait();
+            return Ok();
         }
     }
 }

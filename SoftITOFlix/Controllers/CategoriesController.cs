@@ -46,7 +46,7 @@ namespace SoftITOFlix.Controllers
 
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut]
         [Authorize(Roles = "ContentAdmin")]
         public void PutCategory(Category category)
         {
