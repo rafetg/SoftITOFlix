@@ -144,7 +144,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("SoftITOFlix.Models.Director", b =>
@@ -162,7 +162,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Directors");
+                    b.ToTable("Directors", (string)null);
                 });
 
             modelBuilder.Entity("SoftITOFlix.Models.Episode", b =>
@@ -207,7 +207,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasIndex("MediaId");
 
-                    b.ToTable("Episodes");
+                    b.ToTable("Episodes", (string)null);
                 });
 
             modelBuilder.Entity("SoftITOFlix.Models.Media", b =>
@@ -235,7 +235,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Medias");
+                    b.ToTable("Medias", (string)null);
                 });
 
             modelBuilder.Entity("SoftITOFlix.Models.MediaCategory", b =>
@@ -250,7 +250,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("MediaCategories");
+                    b.ToTable("MediaCategories", (string)null);
                 });
 
             modelBuilder.Entity("SoftITOFlix.Models.MediaDirector", b =>
@@ -265,7 +265,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasIndex("DirectorId");
 
-                    b.ToTable("MediaDirectors");
+                    b.ToTable("MediaDirectors", (string)null);
                 });
 
             modelBuilder.Entity("SoftITOFlix.Models.MediaRestriction", b =>
@@ -280,7 +280,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasIndex("RestrictionId");
 
-                    b.ToTable("MediaRestrictions");
+                    b.ToTable("MediaRestrictions", (string)null);
                 });
 
             modelBuilder.Entity("SoftITOFlix.Models.MediaStar", b =>
@@ -295,7 +295,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasIndex("StarId");
 
-                    b.ToTable("MediaStars");
+                    b.ToTable("MediaStars", (string)null);
                 });
 
             modelBuilder.Entity("SoftITOFlix.Models.Plan", b =>
@@ -321,7 +321,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Plans");
+                    b.ToTable("Plans", (string)null);
                 });
 
             modelBuilder.Entity("SoftITOFlix.Models.Restriction", b =>
@@ -336,7 +336,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Restrictions");
+                    b.ToTable("Restrictions", (string)null);
                 });
 
             modelBuilder.Entity("SoftITOFlix.Models.SoftITOFlixRole", b =>
@@ -463,7 +463,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Stars");
+                    b.ToTable("Stars", (string)null);
                 });
 
             modelBuilder.Entity("SoftITOFlix.Models.UserFavorite", b =>
@@ -478,7 +478,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasIndex("MediaId");
 
-                    b.ToTable("UserFavorites");
+                    b.ToTable("UserFavorites", (string)null);
                 });
 
             modelBuilder.Entity("SoftITOFlix.Models.UserPlan", b =>
@@ -507,7 +507,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserPlans");
+                    b.ToTable("UserPlans", (string)null);
                 });
 
             modelBuilder.Entity("SoftITOFlix.Models.UserWatched", b =>
@@ -522,7 +522,7 @@ namespace SoftITOFlix.Migrations
 
                     b.HasIndex("EpisodeId");
 
-                    b.ToTable("UserWatcheds");
+                    b.ToTable("UserWatcheds", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
