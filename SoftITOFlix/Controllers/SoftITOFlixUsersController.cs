@@ -17,6 +17,12 @@ namespace SoftITOFlix.Controllers
     [ApiController]
     public class SoftITOFlixUsersController : ControllerBase
     {
+        public struct LogInModel
+        {
+            public string UserName { get; set; }
+            public string Password { get; set; }
+        }
+
         private readonly SignInManager<SoftITOFlixUser> _signInManager;
 
         public SoftITOFlixUsersController(SignInManager<SoftITOFlixUser> signInManager)
@@ -26,11 +32,11 @@ namespace SoftITOFlix.Controllers
 
         // GET: api/SoftITOFlixUsers
         [HttpGet]
-        [Authorize(Roles = "Administrator")]
+        //[Authorize(Roles = "Administrator")]
         public ActionResult<List<SoftITOFlixUser>> GetUsers(bool includePassive = true)
         {
             IQueryable<SoftITOFlixUser> users = _signInManager.UserManager.Users;
-
+            
             if (includePassive == false)
             {
                 users = users.Where(u => u.Passive == false);
@@ -132,6 +138,24 @@ namespace SoftITOFlix.Controllers
             user.Passive = true;
             _signInManager.UserManager.UpdateAsync(user).Wait();
             return Ok();
+        }
+
+        [HttpPost("LogIn")]
+        public bool LogIn(LogInModel logInModel)
+        {
+            Microsoft.AspNetCore.Identity.SignInResult signInResult;
+            SoftITOFlixUser applicationUser = _signInManager.UserManager.FindByNameAsync(logInModel.UserName).Result;
+
+            if (applicationUser == null)
+            {
+                return false;
+            }
+            if(applicationUser.Passive == true)
+            {
+                return false;
+            }
+            signInResult = _signInManager.PasswordSignInAsync(applicationUser, logInModel.Password, false, false).Result;
+            return signInResult.Succeeded;
         }
     }
 }
